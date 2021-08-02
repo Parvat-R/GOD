@@ -1,0 +1,314 @@
+import sys
+import os
+import _thread
+import subprocess
+import random
+import hashlib
+
+
+
+
+__version__ = '0.1'
+
+
+
+## REQUIRED TEXT
+flask_main_py_content = """
+# PATCH ALL THE gevent PROBLEMS
+# TO PEVENT ERRORS IF YOU USE gevent
+# ELSE DELETE THE BELOW TWO LINES
+import gevent.monkey
+gevent.monkey.patch_all()
+
+from flask import ( Flask, request, session, 
+                    render_template, url_for, 
+                    abort, redirect, request )
+
+
+app = Flask(__name__)
+app.secret_key = "&secret_key;"
+
+
+@app.route("/", methods=['GET', 'POST'])
+def index():
+    return render_template('home/index.html')
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=9010, debug=False)
+"""
+
+index_html_text = """\
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="keywords" content="">
+
+  <title>Document</title>
+
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./css/index.css">
+  <link rel="shortcut icon" href="./images/favicon.ico" type="image/x-icon">
+
+</head>
+<body>
+
+  <div class="cont">
+    <h1><span class="orange">GOD</span>.py</h1>
+    <p>The god who reduces your work with custom templates and commands.</p>
+  </div>
+  
+
+  <!-- The script is set here because it needs the body to be loded-->
+  <script src="./js/index.js"></script>
+</body>
+</html>
+"""
+
+index_css_text = """\
+/* pre-generated style */
+*{
+  padding: 0;
+  margin: 0;
+
+  box-sizing: border-box;
+}
+body
+{
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+
+  width: 100%;
+  min-height: 100vh;
+
+  color: #000;
+  background-color: #fff;
+
+  font-size: 18px;
+  font-family: monospace;
+  font-weight: normal;
+}
+.cont
+{  
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+
+  padding: 1em;
+  background-color: #00000003;
+  
+  box-shadow: 0px 0px 30px #0003;
+  border-radius: 1em;
+
+  font-size: 2em;
+}
+.cont h1 
+{
+  color: #006;
+}
+.cont p
+{
+  font-size: 18px;
+}
+span.orange { color: rgb(255, 102, 0); }
+"""
+
+
+
+
+
+## The most powerful errort that I 
+# can give to make a never repeating randomly
+# generated hash
+def generate_random_hash():
+    starter = int(1000*random.random())
+    _from = random.randint(
+        starter*100,
+        random.randint(
+            starter,
+            int(
+                starter * 1000000 ** int(
+                                            random.random()*10
+                                        )
+            )
+        )
+    )
+    _till = _from * random.randint(0, _from)
+    result = hashlib.md5(
+        str(
+            random.randint(_from, _till)**2
+        ).encode('utf-8')
+    )
+    return result.hexdigest()
+
+
+
+
+# a function to create files and 
+# folders for the given path
+def _create_files(files:list=[], folders:list=[]) -> bool:
+    for f in files:
+        if not os.path.exists(f):
+            open(f, 'w').close()
+        else:
+            raise FileExistsError(f"File named '{f}' already exists.")
+        
+    for folder in folders:
+        if not os.path.exists(folder):
+            os.mkdir(folder)
+        else:
+            return FileExistsError(f"Folder named '{folder}' already exists.")
+    
+    return True
+        
+
+
+
+
+# a function to create a 
+# frontend template
+def create_frontend_template(dir):
+    if os.path.isdir(dir):
+        return FileExistsError(f"Directory '{dir}' already exists.")
+
+    os.mkdir(dir)
+    files = [
+        "./"+dir+"/index.html",
+        "./"+dir+"/css/index.css",
+        "./"+dir+"/js/index.js",
+        "./"+dir+"/manifest.json"
+    ]
+    folders = [
+        "./"+dir+"/css",
+        "./"+dir+"/js",
+        "./"+dir+"/images",
+        "./"+dir+"/assets"
+    ]
+    
+    for folder in folders:
+        os.mkdir(folder)
+        
+    html_file = open(files[0], "w")
+    html_file.write(index_html_text)
+    html_file.close()
+
+    css_file = open(files[1], "w")
+    css_file.write(index_css_text)
+    css_file.close()
+
+
+    for file in files[2:]:
+        open(file, "w").close()
+    
+    print("Front 🌻 end template created!")
+
+
+
+
+
+
+def create_flask_template(dir):
+    if os.path.isdir(dir):
+        return FileExistsError(f"Directory '{dir}' already exists.")
+    
+    os.mkdir(dir)
+
+    files = [
+        "readme.md",
+        "main.py",
+        "requirements.txt",
+        "Procfile",
+
+        "templates/home/index.html",
+        "templates/readme.md",
+
+        "static/css/index.css",
+        "static/js/index.js",
+        "static/readme.md",
+
+        "database/index.db",
+        "database/readme.md",
+
+        "core/__init__.py",
+        "core/readme.md"
+    ]
+
+    folders = [
+        "templates",
+            "templates/home",
+        "static",
+            "static/css",
+            "static/js",
+            "static/images",
+        "database",
+        "core"
+    ]
+
+    for folder in folders:
+        os.mkdir(dir + "/" + folder)
+
+    for file in files:
+        dire = dir if dir[-1] not in ["\\", "/"] else dir[:-1]
+        open(dire+"/"+file, "w").close()
+    
+    print("Flask🍾 template created!")
+
+
+
+
+
+def main(args):
+    if len(args) == 1:
+        print("Usage: god [command]")
+    
+
+
+    if len(args) == 2:
+        if args[1] in ["-v", "-V", "version"]:
+            print(f"Version {__version__}")
+        
+        if args[1] in ["-r-h", "hash"]:
+            print(generate_random_hash())
+        
+
+
+    if len(args) == 3:
+        if args[1] in ["touch", "-t"]:
+            fname = args[2]
+
+            if not os.path.isfile(fname):
+                print(f"File named {fname} already esists.")
+                return
+
+            open(fname, "w").close()
+            print(f"Created: {fname}")
+
+    
+
+    if len(args) == 4:
+        if args[1] in ["create", "-c"]:
+            if args[2] in ["frontend", "--f-e-t"]:
+                print("Creating frontend template...")
+                create_frontend_template(args[3])
+            
+            if args[2] in ["flask", "--f-j-t"]:
+                print("Creating flask template...")
+                create_flask_template(args[3])
+
+
+
+
+
+if __name__ == "__main__":
+    main(sys.argv)
+else:
+    print("GOD🧚 runs seperatly. Invoke with `god [command]`")
