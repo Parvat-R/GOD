@@ -1,19 +1,23 @@
 # A BASE TEMPLATE FOR FLASK APP FROM `GOD.py`
 # Dir Structure
-#   /root
-#     |--- static
-#            |---- css/
-#                   +--- index.css
-#            |---- js/
-#                   +--- index.js
-#            |---- images/
-#            |---- assets/
-#     |--- templates
-#              +--- index.html
-#              +--- 404.html
-#     +--- app.py
-#     +--- requirements.txt
-#     +--- readme.md
+
+#/root
+#   │   app.py
+#   │   requirements.txt
+#   │   
+#   ├───static
+#   │   ├───assets
+#   │   ├───css
+#   │   │       index.css
+#   │   │       
+#   │   ├───images
+#   │   └───js
+#   │           index.js
+#   │
+#   └───templates
+#           404.html
+#           index.html
+#  
 
 
 from flask import (Flask, session, request,
