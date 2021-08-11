@@ -1,0 +1,19 @@
+{
+    "env": {
+        "API_ID": {
+            "description": "The api_id of your account from https://my.telegram.org",
+            "value": "",
+            "required": true
+        },
+        "API_HASH": {
+            "description": "The api_hash of your account from https://my.telegram.org",
+            "value": "",
+            "required": true
+        },
+        "BOT_TOKEN": {
+            "description": "The bot token of your account from https://telegram.me/botfather",
+            "value": "",
+            "required": true
+        }
+    }
+}
